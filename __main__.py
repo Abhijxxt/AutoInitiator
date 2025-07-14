@@ -7,6 +7,8 @@ PROJECT_NAME = ""
 GIT_REPOSITORY = ""
 CONFIG_FILE = "./project_path.txt"
 # print(CONFIG_FILE)
+
+
 def get_project_path():
     global PROJECT_PATH
     if not PROJECT_PATH:
@@ -20,7 +22,6 @@ def get_project_path():
             with open(CONFIG_FILE, "w") as f:
                 f.write(PROJECT_PATH)
     
-
 def check_project_path():
     global PROJECT_PATH, EXIT_CODE
     if not os.path.exists(PROJECT_PATH):
@@ -84,7 +85,7 @@ def after_creation_terminal():
         os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && start cmd")
         terminal_end()
     elif choice == '4':
-        terminal_end()
+        terminal_start()
     elif choice == '5':
         terminal_end()
     else:
@@ -171,8 +172,6 @@ print("This script will help you set up a new project quickly.")
 get_project_path()
 terminal_start()
 terminal_end()
-print(PROJECT_PATH)
-
 
 
 ## IN FUTURE
