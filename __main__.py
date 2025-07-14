@@ -49,9 +49,43 @@ def open_in_vscode():
     os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && code .")
     sys.exit(0)
 
-def init_git_repo():
-    pass
+def add_remote_repository():
+    global GIT_REPOSITORY, PROJECT_PATH, PROJECT_NAME, EXIT_CODE
+    GIT_REPOSITORY = input("Enter the remote Git repository URL: ").strip()
+    if GIT_REPOSITORY:
+        EXIT_CODE = os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && git remote add origin {GIT_REPOSITORY}")
+        if EXIT_CODE != 0:
+            os.system("cls")
+            print("Failed to add remote repository. Please check the URL and try again.")
+            after_creation_terminal()
+        else:
+            os.system("cls")
+            print("Remote repository added successfully!")
+            after_creation_terminal()
 
+def init_git_repo():
+    global PROJECT_PATH, PROJECT_NAME, EXIT_CODE
+    EXIT_CODE = os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && git init")
+    if EXIT_CODE != 0:
+        os.system("cls")
+        print("Failed to initialize Git repository. Please check the errors above.")
+        after_creation_terminal()
+    else:
+        os.system("cls")
+        print("Git repository initialized successfully!")
+        print("1. Add remote repository")
+        print("2. Back")
+        choice = msvcrt.getch().decode("utf-8")
+        if choice == '1':
+            os.system("cls")
+            add_remote_repository()
+        elif choice == '2':
+            os.system("cls")
+            after_creation_terminal()
+        else: 
+            os.system("cls")
+            print("Invalid choice. Please try again.")
+            init_git_repo()
 def check_project_name():
     global PROJECT_NAME
     for char in PROJECT_NAME:
@@ -91,7 +125,8 @@ def after_creation_terminal():
     else:
         os.system("cls")
         print("Invalid choice. Please try again.")
-        after_creation_terminal()
+    
+    after_creation_terminal()
     
 def project_type_handler():
     global EXIT_CODE 
@@ -180,3 +215,4 @@ terminal_end()
 # Add more features like installing dependencies, etc.
 # Add error handling for each command
 # Add a configuration file to save default project path, dependencies and all
+# Git integration
