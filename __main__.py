@@ -20,19 +20,83 @@ def get_project_path():
             with open(CONFIG_FILE, "w") as f:
                 f.write(PROJECT_PATH)
 
-
-def open_in_vscode():
-    os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && code .")
-    sys.exit(0)
-
-def create_new_project():
-    pass
+def check_project_path():
+    global PROJECT_PATH, EXIT_CODE
+    if not os.path.exists(PROJECT_PATH):
+        try:
+            os.system(f"mkdir {PROJECT_PATH}")
+        except:
+            os.system("cls")
+            print("Failed to create project path. Please check permissions or path validity.")
+            terminal_end()
 
 def change_project_path():
     PROJECT_PATH = input("Enter project path: ").strip()
     with open(CONFIG_FILE, "w") as f:
         f.write(PROJECT_PATH)
     print(f"Project path changed to: {PROJECT_PATH}")
+
+def check_exit_code():
+    if EXIT_CODE != 0:
+        print("An error occurred during the setup process. Please check the commands and try again.")
+        os.system("pause")
+        sys.exit(EXIT_CODE)
+
+def open_in_vscode():
+    global PROJECT_PATH, PROJECT_NAME
+    os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && code .")
+    sys.exit(0)
+
+def check_project_name():
+    global PROJECT_NAME
+    for char in PROJECT_NAME:
+        if char in ['\\', '/', ':', '*', '?', '"', '<', '>', '|', '-', '@']:
+            os.system("cls")
+            print("Invalid project name. Please avoid using special characters.")
+            create_new_project()
+
+def create_project_dir():
+    global PROJECT_PATH, PROJECT_NAME, EXIT_CODE
+    EXIT_CODE = os.system(f"mkdir {PROJECT_PATH}\\{PROJECT_NAME}")
+    if EXIT_CODE != 0:
+        terminal_end()
+
+def project_type_handler():
+    global EXIT_CODE 
+    print("Enter the project type: ")
+    print("1. React")
+    print("2. Next.js")
+    print("3. Node")
+    print("4. Return to main menu")
+    project_type = msvcrt.getch().decode("utf-8")
+    if project_type == '1':
+        EXIT_CODE += os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && npx create-react-app . -y") 
+
+    elif project_type == '2':
+        EXIT_CODE += os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && npx create-next-app . -y")
+
+    elif project_type == '3':
+        EXIT_CODE += os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && npm init -y")
+        os.system(f"echo //start writing your code here > {PROJECT_PATH}\\{PROJECT_NAME}\\index.js")
+    elif project_type == '4':
+        os.system("cls")
+        terminal_start()
+    else: 
+        os.system("cls")
+        print("Invalid choice. Please try again.")
+        project_type_handler()
+
+    check_exit_code()
+
+def create_new_project():
+    global PROJECT_NAME
+    check_project_path()
+    PROJECT_NAME = input("Enter the project name: ").strip().lower()
+    check_project_name()
+    create_project_dir()
+    project_type_handler()
+
+
 
 def terminal_start():
     print("1. Create a new project")
@@ -51,6 +115,7 @@ def terminal_start():
         os.system("cls")
         print(f"Current project path: {PROJECT_PATH}")
     elif choice == '4':
+        os.system("cls")
         terminal_end()
     else:
         os.system("cls")
