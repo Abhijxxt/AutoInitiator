@@ -1,6 +1,10 @@
 import os, sys
 import msvcrt       # For Windows-specific key handling
 
+SUCCESS_COLOR = '\x1b[6;30;42m'
+FAIL_COLOR = '\x1b[6;30;41m'
+RESET_COLOR = '\x1b[0m'
+
 EXIT_CODE = 0       # 0 - normal, 1 or anything - error
 PROJECT_PATH = ""
 PROJECT_NAME = ""
@@ -24,15 +28,18 @@ def get_project_path():
     
 def check_project_path():
     global PROJECT_PATH, EXIT_CODE
-    if os.path.exists(PROJECT_PATH):
-        print(f"Current project path: {PROJECT_PATH} validated successfully!")
-    
-    else:
+
+    if not os.path.exists(PROJECT_PATH):
         EXIT_CODE = os.system(f"mkdir {PROJECT_PATH}")
         if EXIT_CODE != 0:
-            print("Failed to create project path. Please check permissions or path validity.")
+            print(f"{FAIL_COLOR}Failed to create project path. Please check permissions or path validity.{RESET_COLOR}")
             terminal_end()
         
+def validate_project_path():
+    if os.path.exists(PROJECT_PATH):
+        print(f"{SUCCESS_COLOR}Current project path: {PROJECT_PATH} validated successfully!{RESET_COLOR}")
+    else:
+        check_project_path()
 
 def change_project_path():
     PROJECT_PATH = input("Enter project path: ").strip()
@@ -44,7 +51,7 @@ def change_project_path():
 
 def check_exit_code():
     if EXIT_CODE != 0:
-        print("An error occurred during the setup process. Please check the commands and try again.")
+        print(f"{FAIL_COLOR}An error occurred during the setup process. Please check the commands and try again.f{RESET_COLOR}")
         os.system("pause")
         sys.exit(EXIT_CODE)
 
@@ -60,11 +67,11 @@ def add_remote_repository():
         EXIT_CODE = os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && git remote add origin {GIT_REPOSITORY}")
         if EXIT_CODE != 0:
             os.system("cls")
-            print("Failed to add remote repository. Please check the URL and try again.")
+            print(f"{FAIL_COLOR}Failed to add remote repository. Please check the URL and try again.{RESET_COLOR}")
             after_creation_terminal()
         else:
             os.system("cls")
-            print("Remote repository added successfully!")
+            print(f"{SUCCESS_COLOR}Remote repository added successfully!{RESET_COLOR}")
             after_creation_terminal()
 
 def init_git_repo():
@@ -72,11 +79,11 @@ def init_git_repo():
     EXIT_CODE = os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && git init")
     if EXIT_CODE != 0:
         os.system("cls")
-        print("Failed to initialize Git repository. Please check the errors above.")
+        print(f"{FAIL_COLOR}Failed to initialize Git repository. Please check the errors above.{RESET_COLOR}")
         after_creation_terminal()
     else:
         os.system("cls")
-        print("Git repository initialized successfully!")
+        print(f"{SUCCESS_COLOR}Git repository initialized successfully!{RESET_COLOR}")
         print("1. Add remote repository")
         print("2. Back")
         choice = msvcrt.getch().decode("utf-8")
@@ -88,14 +95,15 @@ def init_git_repo():
             after_creation_terminal()
         else: 
             os.system("cls")
-            print("Invalid choice. Please try again.")
+            print(f"{FAIL_COLOR}Invalid choice. Please try again.{RESET_COLOR}")
             init_git_repo()
+
 def check_project_name():
     global PROJECT_NAME
     for char in PROJECT_NAME:
         if char in ['\\', '/', ':', '*', '?', '"', '<', '>', '|', '-', '@']:
             os.system("cls")
-            print("Invalid project name. Please avoid using special characters.")
+            print(f"{FAIL_COLOR}Invalid project name. Please avoid using special characters.{RESET_COLOR}")
             create_new_project()
 
 def create_project_dir():
@@ -105,30 +113,33 @@ def create_project_dir():
         create_new_project()
 
 def after_creation_terminal():
-    print("Project setup completed successfully!")
-    print("1. Open in VSCode")
-    print("2. Initialize Git repository")
+    os.system("cls")
+    print(f"{SUCCESS_COLOR}Project setup completed successfully!{RESET_COLOR}")
+    print("1. Open terminal and VSCode")
+    print("2. Open in VSCode")
     print("3. Open terminal on created project")
-    print("4. Return to main menu")
-    print("5. Exit")
+    print("4. Initialize Git repository ")
+    print("5. Return to main menu")
+    print("6. Exit")
     choice = msvcrt.getch().decode("utf-8")
     if choice == '1':
-        open_in_vscode()
+        os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && start cmd")
+        os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && code .")
+        terminal_end()
     elif choice == '2':
-        init_git_repo()
-    elif choice == '4':
-        os.system("cls")
-        terminal_start()
+        open_in_vscode()
     elif choice == '3':
         os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && start cmd")
         terminal_end()
     elif choice == '4':
-        terminal_start()
+        init_git_repo()
     elif choice == '5':
+        terminal_start()
+    elif choice == '6':
         terminal_end()
     else:
         os.system("cls")
-        print("Invalid choice. Please try again.")
+        print(f"{FAIL_COLOR}Invalid choice. Please try again.{RESET_COLOR}")
     
     after_creation_terminal()
     
@@ -158,7 +169,7 @@ def project_type_handler():
         terminal_start()
     else: 
         os.system("cls")
-        print("Invalid choice. Please try again.")
+        print(f"{FAIL_COLOR}Invalid choice. Please try again.{RESET_COLOR}")
         project_type_handler()
 
     check_exit_code()
@@ -192,13 +203,13 @@ def terminal_start():
         print(f"Current project path: {PROJECT_PATH}")
     elif choice == '4':
         os.system("cls")
-        check_project_path()
+        validate_project_path()
     elif choice == '5':
         os.system("cls")
         terminal_end()
     else:
         os.system("cls")
-        print("Invalid choice. Please try again.")
+        print(f"{FAIL_COLOR}Invalid choice. Please try again.{RESET_COLOR}")
     
     terminal_start()
 
@@ -218,10 +229,11 @@ terminal_end()
 
 
 ## IN FUTURE
-# Check path validity
+# Check path validity ✔️
 # Add more project types
 # Add more features like installing dependencies, etc.
 # Add error handling for each command
 # Add a configuration file to save default project path, dependencies and all
 # give a backend and frontend option in a folder
 # Git integration
+# Make it cross-platform compatible
