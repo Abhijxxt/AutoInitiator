@@ -5,7 +5,7 @@ EXIT_CODE = 0       # 0 - normal, 1 or anything - error
 PROJECT_PATH = ""
 PROJECT_NAME = ""
 GIT_REPOSITORY = ""
-CONFIG_FILE = os.getcwd() + "\\project_path.txt"
+CONFIG_FILE = "./project_path.txt"
 # print(CONFIG_FILE)
 def get_project_path():
     global PROJECT_PATH
@@ -19,14 +19,13 @@ def get_project_path():
             PROJECT_PATH = input("Enter project path: ").strip()
             with open(CONFIG_FILE, "w") as f:
                 f.write(PROJECT_PATH)
+    
 
 def check_project_path():
     global PROJECT_PATH, EXIT_CODE
     if not os.path.exists(PROJECT_PATH):
-        try:
-            os.system(f"mkdir {PROJECT_PATH}")
-        except:
-            os.system("cls")
+        EXIT_CODE = os.system(f"mkdir {PROJECT_PATH}")
+        if EXIT_CODE != 0:
             print("Failed to create project path. Please check permissions or path validity.")
             terminal_end()
 
@@ -35,6 +34,8 @@ def change_project_path():
     with open(CONFIG_FILE, "w") as f:
         f.write(PROJECT_PATH)
     print(f"Project path changed to: {PROJECT_PATH}")
+    print("Please restart the script to apply changes.")
+    terminal_end()
 
 def check_exit_code():
     if EXIT_CODE != 0:
@@ -164,9 +165,19 @@ def terminal_end():
     sys.exit(0)
 
 ## WORKFLOW OF THE SCRIPT
+os.system("cls")
 print("----Welcome to AutoInitiator!----")
 print("This script will help you set up a new project quickly.")
 get_project_path()
 terminal_start()
 terminal_end()
 print(PROJECT_PATH)
+
+
+
+## IN FUTURE
+# Check path validity
+# Add more project types
+# Add more features like installing dependencies, etc.
+# Add error handling for each command
+# Add a configuration file to save default project path, dependencies and all
