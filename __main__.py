@@ -24,11 +24,15 @@ def get_project_path():
     
 def check_project_path():
     global PROJECT_PATH, EXIT_CODE
-    if not os.path.exists(PROJECT_PATH):
+    if os.path.exists(PROJECT_PATH):
+        print(f"Current project path: {PROJECT_PATH} validated successfully!")
+    
+    else:
         EXIT_CODE = os.system(f"mkdir {PROJECT_PATH}")
         if EXIT_CODE != 0:
             print("Failed to create project path. Please check permissions or path validity.")
             terminal_end()
+        
 
 def change_project_path():
     PROJECT_PATH = input("Enter project path: ").strip()
@@ -173,7 +177,8 @@ def terminal_start():
     print("1. Create a new project")
     print("2. Change the project path directory")
     print("3. Show current project path")
-    print("4. Exit")
+    print("4. Validate current project path")
+    print("5. Exit")
 
     choice = msvcrt.getch().decode("utf-8")
     if choice == '1':
@@ -186,6 +191,9 @@ def terminal_start():
         os.system("cls")
         print(f"Current project path: {PROJECT_PATH}")
     elif choice == '4':
+        os.system("cls")
+        check_project_path()
+    elif choice == '5':
         os.system("cls")
         terminal_end()
     else:
@@ -215,4 +223,5 @@ terminal_end()
 # Add more features like installing dependencies, etc.
 # Add error handling for each command
 # Add a configuration file to save default project path, dependencies and all
+# give a backend and frontend option in a folder
 # Git integration
