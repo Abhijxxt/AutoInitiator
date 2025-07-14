@@ -47,6 +47,9 @@ def open_in_vscode():
     os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && code .")
     sys.exit(0)
 
+def init_git_repo():
+    pass
+
 def check_project_name():
     global PROJECT_NAME
     for char in PROJECT_NAME:
@@ -59,8 +62,35 @@ def create_project_dir():
     global PROJECT_PATH, PROJECT_NAME, EXIT_CODE
     EXIT_CODE = os.system(f"mkdir {PROJECT_PATH}\\{PROJECT_NAME}")
     if EXIT_CODE != 0:
-        terminal_end()
+        create_new_project()
 
+def after_creation_terminal():
+    print("Project setup completed successfully!")
+    print("1. Open in VSCode")
+    print("2. Initialize Git repository")
+    print("3. Open terminal on created project")
+    print("4. Return to main menu")
+    print("5. Exit")
+    choice = msvcrt.getch().decode("utf-8")
+    if choice == '1':
+        open_in_vscode()
+    elif choice == '2':
+        init_git_repo()
+    elif choice == '4':
+        os.system("cls")
+        terminal_start()
+    elif choice == '3':
+        os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && start cmd")
+        terminal_end()
+    elif choice == '4':
+        terminal_end()
+    elif choice == '5':
+        terminal_end()
+    else:
+        os.system("cls")
+        print("Invalid choice. Please try again.")
+        after_creation_terminal()
+    
 def project_type_handler():
     global EXIT_CODE 
     print("Enter the project type: ")
@@ -71,13 +101,17 @@ def project_type_handler():
     project_type = msvcrt.getch().decode("utf-8")
     if project_type == '1':
         EXIT_CODE += os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && npx create-react-app . -y") 
+        after_creation_terminal() if EXIT_CODE == 0 else terminal_start()
 
     elif project_type == '2':
         EXIT_CODE += os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && npx create-next-app . -y")
+        after_creation_terminal() if EXIT_CODE == 0 else terminal_start()
 
     elif project_type == '3':
         EXIT_CODE += os.system(f"cd {PROJECT_PATH}\\{PROJECT_NAME} && npm init -y")
         os.system(f"echo //start writing your code here > {PROJECT_PATH}\\{PROJECT_NAME}\\index.js")
+        after_creation_terminal() if EXIT_CODE == 0 else terminal_start()
+
     elif project_type == '4':
         os.system("cls")
         terminal_start()
